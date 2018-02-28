@@ -10,4 +10,4 @@ if [[ ! -f "$FILE" ]] ; then
     exit 1
 fi
 
-echo "$1 $2" >> "$FILE"
+echo "$DB_USER $PASSWORD" >> "$FILE"
