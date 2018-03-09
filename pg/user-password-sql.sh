@@ -6,6 +6,12 @@ USER="$2"
 PASSWORD="$3"
 HASH=$( echo -n "${PASSWORD}${USER}" | md5sum | awk '{print $1}' )
 
-echo "DROP USER IF EXISTS $USER ;"
-echo "CREATE USER $USER WITH PASSWORD 'md5$HASH' ;"
-echo "GRANT $ROLE TO $USER ;"
+cat <<SQL
+IF NOT EXISTS (SELECT * FROM pg_catalog.pg_roles WHERE rolname = '$USER')
+THEN
+  CREATE USER $USER WITH PASSWORD 'md5$HASH' ;
+ELSE
+  ALTER USER $USER PASSWORD 'md5$HASH' ;
+END IF ;
+GRANT $ROLE TO $USER ;
+SQL
